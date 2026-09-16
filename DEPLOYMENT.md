@@ -36,12 +36,39 @@ Render provides free hosting with automatic HTTPS SSL certificates and GitHub co
 
 ---
 
-## Option 2: Railway.app (Instant 1-Click Deploy)
+## Railway.app Deployment (Fast 1-Click Cloud Hosting)
 
-1. Go to **[railway.app](https://railway.app)**.
-2. Click **"New Project"** &rarr; **"Deploy from GitHub repo"**.
-3. Select your repository.
-4. Railway automatically detects the [`Procfile`](file:///d:/madam%20jii/Procfile) or [`Dockerfile`](file:///d:/madam%20jii/Dockerfile) and assigns a public URL with HTTPS.
+The repository includes both [`railway.json`](file:///d:/madam%20jii/railway.json) and [`Procfile`](file:///d:/madam%20jii/Procfile) for zero-configuration builds.
+
+### Step 1: Push code to a GitHub Repository
+If you haven't created a GitHub repo yet:
+1. Go to **[github.com/new](https://github.com/new)** and create a new repository (e.g. `certifyflow`).
+2. Run these commands in your terminal:
+   ```bash
+   git remote add origin https://github.com/<YOUR_GITHUB_USERNAME>/<YOUR_REPO_NAME>.git
+   git branch -M main
+   git push -u origin main
+   ```
+
+### Step 2: Deploy on Railway
+1. Go to **[railway.app](https://railway.app)** and log in with your GitHub account.
+2. Click **"+ New Project"** &rarr; select **"Deploy from GitHub repo"**.
+3. Choose your `certifyflow` repository.
+4. Click **"Deploy Now"**. Railway will detect `railway.json` / `Procfile` and launch the app in ~30 seconds.
+
+### Step 3: Generate Public HTTPS Domain
+1. In your Railway dashboard, click on the **CertifyFlow** service card.
+2. Navigate to the **Settings** tab.
+3. Under **Networking**, click **"Generate Domain"**.
+4. You will receive a live, public HTTPS URL (e.g., `https://certifyflow-production.up.railway.app`).
+
+### Step 4 (Optional): Add SMTP Credentials as Environment Variables
+In Railway &rarr; **Variables** tab, you can optionally add:
+- `SMTP_HOST`: `smtp.gmail.com`
+- `SMTP_PORT`: `587`
+- `SMTP_USER`: `your-email@gmail.com`
+- `SMTP_PASS`: `<your-16-char-google-app-password>`
+
 
 ---
 
