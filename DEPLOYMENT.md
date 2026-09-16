@@ -1,28 +1,37 @@
 # Deployment Guide — CertifyFlow
 
-CertifyFlow is designed to be cloud-native with **zero required external pip dependencies** and automatic dynamic port binding (`$PORT`).
+CertifyFlow is designed to be cloud-native with **zero required external pip dependencies** and supports both Serverless (Vercel) and Container/PaaS runtimes (Railway, Render, Docker).
 
 ---
 
-## Option 1: Render.com (Recommended — 100% Free Tier)
+## Option 1: Vercel (Recommended — Free, Fast & Serverless)
 
-Render provides free hosting with automatic HTTPS SSL certificates and GitHub continuous deployment.
+Vercel provides free global CDN hosting for the frontend and automatically runs the Python SMTP email backend via [`api/index.py`](file:///d:/madam%20jii/api/index.py) serverless functions.
 
-### Steps:
-1. Push your repository to **GitHub**:
+### Step 1: Push Code to GitHub
+1. Create a repository on **[github.com/new](https://github.com/new)** (e.g. `certifyflow`).
+2. In your terminal, run:
    ```bash
-   git init
-   git add .
-   git commit -m "Initial commit for CertifyFlow"
-   git remote add origin https://github.com/<your-username>/<your-repo-name>.git
+   git remote add origin https://github.com/<YOUR_GITHUB_USERNAME>/<YOUR_REPO_NAME>.git
+   git branch -M main
    git push -u origin main
    ```
-2. Go to **[render.com](https://render.com)** and sign in with GitHub.
-3. Click **"New +"** &rarr; **"Web Service"**.
-4. Connect your GitHub repository.
-5. Configure the service settings:
-   - **Name:** `certifyflow` (or any name)
-   - **Environment:** `Python 3`
+
+### Step 2: Import & Deploy on Vercel
+1. Go to **[vercel.com](https://vercel.com)** and log in with your GitHub account.
+2. Click **"Add New..."** &rarr; **"Project"**.
+3. Under **"Import Git Repository"**, find your `certifyflow` repo and click **"Import"**.
+4. In the configuration screen:
+   - **Framework Preset:** *Other* (detected automatically via `vercel.json`).
+   - **Root Directory:** `./`
+5. *(Optional)* Expand **Environment Variables** if you want your sender email pre-configured:
+   - `SMTP_HOST`: `smtp.gmail.com`
+   - `SMTP_PORT`: `587`
+   - `SMTP_USER`: `your-email@gmail.com`
+   - `SMTP_PASS`: `<your-16-char-google-app-password>`
+6. Click **"Deploy"**!
+   Your web app will be live with a global HTTPS link (e.g. `https://certifyflow.vercel.app`) in ~25 seconds.
+
    - **Build Command:** *(leave blank or `echo 'ready'`)*
    - **Start Command:** `python execution/serve.py`
    - **Plan:** Free
