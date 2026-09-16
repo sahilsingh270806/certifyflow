@@ -1,0 +1,29 @@
+# Intermediate & Scratch files (always regenerated)
+.tmp/
+
+# Environment and sensitive keys
+.env
+*.env.local
+
+# Google OAuth credentials
+credentials.json
+token.json
+
+# Python cache & artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Virtual environments
+venv/
+.venv/
+ENV/
+env/
+
+# IDE & OS specifics
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

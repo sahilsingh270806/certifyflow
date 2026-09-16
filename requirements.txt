@@ -1,0 +1,2 @@
+# CertifyFlow requires zero external third-party pip dependencies.
+# Standard Python 3.10+ standard library (smtplib, http.server, json, email, etc.)

@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: certifyflow
+    runtime: python
+    buildCommand: "echo 'Zero build dependencies required.'"
+    startCommand: "python execution/serve.py"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: PORT
+        value: 8080

@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CertifyFlow — Event Certificate Distribution & Attendance Verification</title>
+  <meta name="description" content="Automated, attendance-verified event certificate generation and distribution platform. Upload templates, sync attendee data, craft personalized emails, and dispatch certificates instantly.">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Great+Vibes&family=Montserrat:wght@400;600;700&family=Outfit:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- External Libraries with fallback readiness -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Ambient background glow elements -->
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
+  <div class="glow-orb orb-3"></div>
+
+  <!-- App Header -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="nav-brand" id="navBrand" onclick="navigateToStep(1)">
+        <div class="brand-logo">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="8" r="6"/>
+            <path d="M15.477 12.89 17 22l-5-3-5 3 1.523-9.11"/>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">Certify<span class="gradient-text">Flow</span></span>
+          <span class="brand-tagline">Event Verification & Dispatch</span>
+        </div>
+      </div>
+
+      <!-- Stepper Indicator -->
+      <nav class="stepper-nav" aria-label="Progress Stepper">
+        <div class="step-indicator active" id="stepIndicator-1" onclick="navigateToStep(1)">
+          <div class="step-circle">1</div>
+          <span class="step-label">Welcome</span>
+        </div>
+        <div class="step-line" id="stepLine-1"></div>
+
+        <div class="step-indicator" id="stepIndicator-2" onclick="navigateToStep(2)">
+          <div class="step-circle">2</div>
+          <span class="step-label">Template</span>
+        </div>
+        <div class="step-line" id="stepLine-2"></div>
+
+        <div class="step-indicator" id="stepIndicator-3" onclick="navigateToStep(3)">
+          <div class="step-circle">3</div>
+          <span class="step-label">Attendees</span>
+        </div>
+        <div class="step-line" id="stepLine-3"></div>
+
+        <div class="step-indicator" id="stepIndicator-4" onclick="navigateToStep(4)">
+          <div class="step-circle">4</div>
+          <span class="step-label">Email Draft</span>
+        </div>
+        <div class="step-line" id="stepLine-4"></div>
+
+        <div class="step-indicator" id="stepIndicator-5" onclick="navigateToStep(5)">
+          <div class="step-circle">5</div>
+          <span class="step-label">Generate & Dispatch</span>
+        </div>
+      </nav>
+
+      <!-- Quick Action Right -->
+      <div class="nav-actions">
+        <button class="btn btn-secondary btn-sm" id="btnQuickDemo" onclick="loadFullDemoProject()">
+          <span class="icon">✨</span> Load Quick Demo
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-content">
+
+    <!-- ============================================================= -->
+    <!-- STEP 1: WELCOME & LANDING PAGE -->
+    <!-- ============================================================= -->
+    <section class="step-panel active" id="stepPanel-1">
+      <div class="hero-section">
+        <div class="hero-badge">
+          <span class="pulse-dot"></span>
+          <span>Automated Attendance-Based Distribution Platform</span>
+        </div>
+
+        <h1 class="hero-title">
+          Distribute Event Certificates <br>
+          <span class="gradient-text">Based on Attendance Records</span>
+        </h1>
+
+        <p class="hero-subtitle">
+          Eliminate manual effort. Upload your design template, sync your event attendance roster,
+          craft personalized emails with dynamic placeholders, and dispatch verified certificates in minutes.
+        </p>
+
+        <div class="hero-cta-group">
+          <button class="btn btn-primary btn-lg" id="btnStartProject" onclick="navigateToStep(2)">
+            <span>Start New Project</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </button>
+          <button class="btn btn-secondary btn-lg" onclick="loadFullDemoProject()">
+            <span>✨ Try Interactive Demo</span>
+          </button>
+        </div>
+
+        <!-- Metric KPI Cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-icon">🎯</div>
+            <div class="kpi-val">100%</div>
+            <div class="kpi-desc">Attendance Verified (Zero Absent Leakage)</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon">⚡</div>
+            <div class="kpi-val">&lt; 30s</div>
+            <div class="kpi-desc">Bulk Generation & Preview for 500+ Attendees</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon">🎨</div>
+            <div class="kpi-val">WYSIWYG</div>
+            <div class="kpi-desc">Interactive Drag & Drop Canvas Placement</div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon">📦</div>
+            <div class="kpi-val">Multi-Channel</div>
+            <div class="kpi-desc">Direct Email Dispatch & Bulk ZIP Export</div>
+          </div>
+        </div>
+
+        <!-- Workflow Visual Roadmap -->
+        <div class="workflow-card">
+          <h2 class="section-title text-center">Streamlined 4-Step Pipeline</h2>
+          <div class="workflow-steps">
+            <div class="wf-step">
+              <div class="wf-number">01</div>
+              <h3>Template Setup</h3>
+              <p>Upload your certificate image, paste a Canva design link, or use built-in luxury presets.</p>
+            </div>
+            <div class="wf-arrow">→</div>
+            <div class="wf-step">
+              <div class="wf-number">02</div>
+              <h3>Roster & Filter</h3>
+              <p>Ingest Excel/CSV files with participant name, roll number, email, and attendance flag.</p>
+            </div>
+            <div class="wf-arrow">→</div>
+            <div class="wf-step">
+              <div class="wf-number">03</div>
+              <h3>Email Drafting</h3>
+              <p>Compose personalized email bodies with variable chips and real-time live preview.</p>
+            </div>
+            <div class="wf-arrow">→</div>
+            <div class="wf-step">
+              <div class="wf-number">04</div>
+              <h3>Dispatch & Export</h3>
+              <p>Generate high-DPI certificates, preview each badge, dispatch emails, or download full ZIP.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- STEP 2: TEMPLATE UPLOAD & INTERACTIVE FIELD MAPPER -->
+    <!-- ============================================================= -->
+    <section class="step-panel" id="stepPanel-2">
+      <div class="panel-header">
+        <div>
+          <span class="step-pill">Step 2 of 5</span>
+          <h2 class="panel-title">Certificate Template & Visual Field Mapper</h2>
+          <p class="panel-desc">Upload your certificate background or choose a template, then drag and style the placeholder fields.</p>
+        </div>
+        <div class="panel-header-actions">
+          <button class="btn btn-secondary" onclick="navigateToStep(1)">Back</button>
+          <button class="btn btn-primary" onclick="navigateToStep(3)">
+            Next: Upload Attendees
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="canvas-editor-layout">
+        <!-- Left Sidebar: Controls & Field Styling -->
+        <div class="editor-sidebar">
+          <!-- Template Source Selector -->
+          <div class="control-box">
+            <label class="control-label">1. Template Source</label>
+            <div class="tabs">
+              <button class="tab-btn active" id="tabPreset" onclick="switchTemplateSource('preset')">Preset Templates</button>
+              <button class="tab-btn" id="tabUpload" onclick="switchTemplateSource('upload')">Upload Image</button>
+              <button class="tab-btn" id="tabCanva" onclick="switchTemplateSource('canva')">Canva / Link</button>
+            </div>
+
+            <!-- Source: Preset -->
+            <div class="source-subpanel active" id="sourcePreset">
+              <div class="preset-grid">
+                <div class="preset-card active" onclick="selectPresetTemplate('tech_summit')">
+                  <div class="preset-preview tech-bg"></div>
+                  <span>Tech Summit (Modern)</span>
+                </div>
+                <div class="preset-card" onclick="selectPresetTemplate('royal_gold')">
+                  <div class="preset-preview gold-bg"></div>
+                  <span>Royal Gold (Academic)</span>
+                </div>
+                <div class="preset-card" onclick="selectPresetTemplate('cyber_minimal')">
+                  <div class="preset-preview cyber-bg"></div>
+                  <span>Cyber Neon (Minimal)</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Source: Upload -->
+            <div class="source-subpanel" id="sourceUpload">
+              <div class="drop-zone" id="templateDropZone">
+                <input type="file" id="templateFileInput" accept="image/png, image/jpeg, image/webp, image/svg+xml" class="file-hidden">
+                <div class="drop-icon">🖼️</div>
+                <p class="drop-title">Drop your certificate template here</p>
+                <p class="drop-sub">Supports PNG, JPG, WebP, SVG (Recommended: 1920x1080 or 1200x850)</p>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('templateFileInput').click()">Browse Image</button>
+              </div>
+            </div>
+
+            <!-- Source: Canva Link -->
+            <div class="source-subpanel" id="sourceCanva">
+              <div class="input-group">
+                <label for="canvaLinkInput" class="input-label">Canva or Public Design Link</label>
+                <input type="url" id="canvaLinkInput" placeholder="https://www.canva.com/design/..." class="form-input">
+                <button type="button" class="btn btn-secondary btn-sm mt-2" onclick="applyCanvaDesignLink()">Fetch / Connect Canva Link</button>
+                <p class="field-hint mt-1">Canva links embed automatically, or you can export as PNG from Canva and upload above for pixel-perfect alignment.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Active Field Selector -->
+          <div class="control-box">
+            <label class="control-label">2. Select Field to Style & Position</label>
+            <div class="field-pills-selector">
+              <button class="field-pill active" id="pill-name" onclick="selectActiveField('name')">Name</button>
+              <button class="field-pill" id="pill-roll" onclick="selectActiveField('roll')">Roll No</button>
+              <button class="field-pill" id="pill-event" onclick="selectActiveField('event')">Event Title</button>
+              <button class="field-pill" id="pill-date" onclick="selectActiveField('date')">Date</button>
+              <button class="field-pill" id="pill-certId" onclick="selectActiveField('certId')">Cert ID</button>
+            </div>
+          </div>
+
+          <!-- Field Style Settings -->
+          <div class="control-box">
+            <label class="control-label">3. Typography & Styling (<span id="activeFieldNameDisplay">Candidate Name</span>)</label>
+            
+            <div class="form-row">
+              <div class="form-col">
+                <label for="fontFamilySelect" class="input-label">Font Family</label>
+                <select id="fontFamilySelect" class="form-select" onchange="updateActiveFieldProp('fontFamily', this.value)">
+                  <option value="'Playfair Display', Georgia, serif">Playfair Display (Serif Classic)</option>
+                  <option value="'Cinzel', serif">Cinzel (Formal & Royal)</option>
+                  <option value="'Great Vibes', cursive">Great Vibes (Signature Script)</option>
+                  <option value="'Plus Jakarta Sans', sans-serif">Plus Jakarta Sans (Modern)</option>
+                  <option value="'Montserrat', sans-serif">Montserrat (Bold & Clean)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-col">
+                <label class="input-label">Font Size (<span id="fontSizeVal">52</span>px)</label>
+                <input type="range" id="fontSizeRange" min="12" max="96" value="52" class="form-range" oninput="updateActiveFieldProp('fontSize', parseInt(this.value))">
+              </div>
+              <div class="form-col">
+                <label for="textColorPicker" class="input-label">Color</label>
+                <div class="color-picker-wrapper">
+                  <input type="color" id="textColorPicker" value="#ffffff" class="color-picker-input" onchange="updateActiveFieldProp('color', this.value)">
+                  <input type="text" id="textColorHex" value="#ffffff" class="form-input hex-input" oninput="updateActiveFieldProp('color', this.value)">
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-col">
+                <label class="input-label">Weight</label>
+                <select id="fontWeightSelect" class="form-select" onchange="updateActiveFieldProp('fontWeight', this.value)">
+                  <option value="400">Regular (400)</option>
+                  <option value="600">SemiBold (600)</option>
+                  <option value="700" selected>Bold (700)</option>
+                  <option value="800">ExtraBold (800)</option>
+                </select>
+              </div>
+              <div class="form-col">
+                <label class="input-label">Alignment</label>
+                <div class="btn-group-segmented">
+                  <button type="button" class="btn-segment" id="align-left" onclick="updateActiveFieldProp('align', 'left')">L</button>
+                  <button type="button" class="btn-segment active" id="align-center" onclick="updateActiveFieldProp('align', 'center')">C</button>
+                  <button type="button" class="btn-segment" id="align-right" onclick="updateActiveFieldProp('align', 'right')">R</button>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-row mt-2">
+              <div class="form-col">
+                <label class="input-label">X Coordinate: <span id="valX">600</span>px</label>
+                <input type="number" id="inputX" value="600" class="form-input" oninput="updateActiveFieldProp('x', parseInt(this.value) || 0)">
+              </div>
+              <div class="form-col">
+                <label class="input-label">Y Coordinate: <span id="valY">380</span>px</label>
+                <input type="number" id="inputY" value="380" class="form-input" oninput="updateActiveFieldProp('y', parseInt(this.value) || 0)">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Interactive Canvas Area -->
+        <div class="editor-canvas-container">
+          <div class="canvas-toolbar">
+            <div class="canvas-info">
+              <span class="status-indicator"></span>
+              <span>Visual Field Editor &bull; Click & Drag elements directly on canvas</span>
+            </div>
+            <div class="canvas-actions">
+              <button class="btn btn-secondary btn-sm" onclick="resetFieldCoordinates()">Reset Coordinates</button>
+              <button class="btn btn-secondary btn-sm" onclick="testRenderSampleCertificate()">Refresh Preview</button>
+            </div>
+          </div>
+
+          <div class="canvas-wrapper" id="canvasWrapper">
+            <canvas id="certificateCanvas" width="1200" height="850"></canvas>
+            <div id="dragOverlay" class="drag-overlay"></div>
+          </div>
+
+          <div class="canvas-footer-tip">
+            💡 <strong>Tip:</strong> You can click and drag any text label directly on the certificate above to adjust its position.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- STEP 3: ATTENDEE DATA & ATTENDANCE FILTER -->
+    <!-- ============================================================= -->
+    <section class="step-panel" id="stepPanel-3">
+      <div class="panel-header">
+        <div>
+          <span class="step-pill">Step 3 of 5</span>
+          <h2 class="panel-title">Attendee Data & Attendance Verification</h2>
+          <p class="panel-desc">Upload your attendee spreadsheet (.xlsx, .xls, .csv). Certificates will only be generated for eligible attendees.</p>
+        </div>
+        <div class="panel-header-actions">
+          <button class="btn btn-secondary" onclick="navigateToStep(2)">Back</button>
+          <button class="btn btn-primary" id="btnNextToEmail" onclick="navigateToStep(4)">
+            Next: Email Draft
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Upload Zone & Action Bars -->
+      <div class="roster-top-bar">
+        <div class="drop-zone roster-drop-zone" id="rosterDropZone">
+          <input type="file" id="rosterFileInput" accept=".xlsx, .xls, .csv, text/csv" class="file-hidden">
+          <div class="drop-icon">📊</div>
+          <p class="drop-title">Upload Excel / CSV Attendance Sheet</p>
+          <p class="drop-sub">Columns recognized: <strong>Name, Roll No, Email, Attendance Status</strong></p>
+          <div class="btn-cluster mt-2">
+            <button type="button" class="btn btn-primary btn-sm" onclick="document.getElementById('rosterFileInput').click()">Browse Spreadsheet</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="downloadSampleSpreadsheet()">Download Sample CSV</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="loadDemoRoster()">✨ Load Demo Roster (10 Attendees)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filter Controls & KPI Strip -->
+      <div class="filter-strip">
+        <div class="filter-options">
+          <div class="filter-toggle-card">
+            <div class="toggle-switch-wrapper">
+              <label class="switch">
+                <input type="checkbox" id="attendanceFilterToggle" checked onchange="handleAttendanceFilterToggle()">
+                <span class="slider round"></span>
+              </label>
+              <div>
+                <strong class="toggle-title">Filter by Attendance (Present Only)</strong>
+                <p class="toggle-subtitle">Automatically exclude attendees marked Absent from receiving certificates and emails.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="kpi-mini-grid">
+          <div class="kpi-mini-card">
+            <span class="kpi-mini-label">Total Uploaded</span>
+            <span class="kpi-mini-val" id="kpiTotal">0</span>
+          </div>
+          <div class="kpi-mini-card eligible">
+            <span class="kpi-mini-label">Eligible (Present)</span>
+            <span class="kpi-mini-val" id="kpiEligible">0</span>
+          </div>
+          <div class="kpi-mini-card excluded">
+            <span class="kpi-mini-label">Excluded (Absent)</span>
+            <span class="kpi-mini-val" id="kpiExcluded">0</span>
+          </div>
+          <div class="kpi-mini-card valid">
+            <span class="kpi-mini-label">Valid Emails</span>
+            <span class="kpi-mini-val" id="kpiValidEmails">0</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Search & Table Controls -->
+      <div class="table-container">
+        <div class="table-header-bar">
+          <div class="search-box">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" id="tableSearchInput" placeholder="Search by name, roll no, or email..." class="search-input" oninput="renderAttendeeTable()">
+          </div>
+          <div class="table-actions">
+            <button class="btn btn-secondary btn-sm" onclick="toggleSelectAllRows(true)">Select All Eligible</button>
+            <button class="btn btn-secondary btn-sm" onclick="toggleSelectAllRows(false)">Deselect All</button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table" id="attendeesTable">
+            <thead>
+              <tr>
+                <th width="40"><input type="checkbox" id="masterCheckbox" checked onchange="handleMasterCheckbox(this.checked)"></th>
+                <th>Candidate Name</th>
+                <th>Roll No / ID</th>
+                <th>Email Address</th>
+                <th>Attendance Status</th>
+                <th>Eligibility</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="attendeesTableBody">
+              <tr class="empty-row">
+                <td colspan="7">No attendees loaded yet. Upload your spreadsheet or click "Load Demo Roster" above!</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- STEP 4: EMAIL DRAFTING & LIVE PREVIEW -->
+    <!-- ============================================================= -->
+    <section class="step-panel" id="stepPanel-4">
+      <div class="panel-header">
+        <div>
+          <span class="step-pill">Step 4 of 5</span>
+          <h2 class="panel-title">Draft Distribution Email</h2>
+          <p class="panel-desc">Personalize your notification email. Insert dynamic placeholders to auto-populate each recipient's details.</p>
+        </div>
+        <div class="panel-header-actions">
+          <button class="btn btn-secondary" onclick="navigateToStep(3)">Back</button>
+          <button class="btn btn-primary" onclick="navigateToStep(5)">
+            Next: Review & Dispatch
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="email-draft-layout">
+        <!-- Left Column: Form & Variable Controls -->
+        <div class="email-form-pane">
+          <div class="control-box">
+            <h3 class="box-title">Sender & Event Information</h3>
+            <div class="form-row">
+              <div class="form-col">
+                <label for="senderNameInput" class="input-label">Sender Display Name</label>
+                <input type="text" id="senderNameInput" class="form-input" value="National AI Summit Organizing Committee" oninput="updateLiveEmailPreview()">
+              </div>
+              <div class="form-col">
+                <label for="replyToEmailInput" class="input-label">Reply-To Email</label>
+                <input type="email" id="replyToEmailInput" class="form-input" value="certificates@aisummit2026.org" oninput="updateLiveEmailPreview()">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-col">
+                <label for="eventNameInput" class="input-label">Event Name</label>
+                <input type="text" id="eventNameInput" class="form-input" value="National AI & Cloud Summit 2026" oninput="updateEventName(this.value)">
+              </div>
+              <div class="form-col">
+                <label for="eventDateInput" class="input-label">Event / Issuance Date</label>
+                <input type="text" id="eventDateInput" class="form-input" value="September 17, 2026" oninput="updateEventDate(this.value)">
+              </div>
+            </div>
+          </div>
+
+          <div class="control-box">
+            <div class="box-header-row">
+              <h3 class="box-title">Email Content</h3>
+              <div class="tag-chips-label">Click tag to insert:</div>
+            </div>
+
+            <!-- Dynamic Tags Toolbar -->
+            <div class="variable-chips">
+              <button type="button" class="chip-btn" onclick="insertVariable('{{name}}')">{{name}}</button>
+              <button type="button" class="chip-btn" onclick="insertVariable('{{roll_no}}')">{{roll_no}}</button>
+              <button type="button" class="chip-btn" onclick="insertVariable('{{event_name}}')">{{event_name}}</button>
+              <button type="button" class="chip-btn" onclick="insertVariable('{{date}}')">{{date}}</button>
+              <button type="button" class="chip-btn" onclick="insertVariable('{{certificate_id}}')">{{certificate_id}}</button>
+            </div>
+
+            <div class="input-group mt-2">
+              <label for="emailSubjectInput" class="input-label">Subject Line</label>
+              <input type="text" id="emailSubjectInput" class="form-input" value="Your Official Certificate of Participation: {{event_name}} — {{name}}" oninput="updateLiveEmailPreview()">
+            </div>
+
+            <div class="input-group mt-2">
+              <label for="emailBodyTextarea" class="input-label">Email Body (HTML / Text)</label>
+              <textarea id="emailBodyTextarea" rows="9" class="form-textarea" oninput="updateLiveEmailPreview()">Dear {{name}},
+
+Congratulations! Thank you for participating in {{event_name}} on {{date}}.
+
+Based on your verified attendance, your official Certificate of Participation (Certificate ID: {{certificate_id}}) has been issued and is attached to this email.
+
+You may share this certificate on LinkedIn and professional profiles to showcase your achievement.
+
+Warm regards,
+{{event_name}} Organizing Team
+Verification Portal: https://verify.eventpulse.org</textarea>
+            </div>
+
+            <!-- Attachment options -->
+            <div class="attachment-toggle-card mt-2">
+              <div class="toggle-switch-wrapper">
+                <label class="switch">
+                  <input type="checkbox" id="attachCertToggle" checked onchange="updateLiveEmailPreview()">
+                  <span class="slider round"></span>
+                </label>
+                <div>
+                  <strong>Attach Generated Certificate</strong>
+                  <p class="toggle-subtitle">Includes the personalized high-resolution certificate image (PNG/SVG) as an attachment.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Interactive Live Email Preview -->
+        <div class="email-preview-pane">
+          <div class="preview-header">
+            <div class="preview-title-wrap">
+              <span class="preview-badge">Live Recipient Preview</span>
+              <span class="preview-sub">See how the email renders for any attendee</span>
+            </div>
+            <div class="recipient-selector-wrap">
+              <label for="previewRecipientSelect" class="input-label mb-0">Preview As:</label>
+              <select id="previewRecipientSelect" class="form-select form-select-sm" onchange="renderSpecificRecipientPreview(this.value)">
+                <!-- populated dynamically -->
+              </select>
+            </div>
+          </div>
+
+          <!-- Email Client Mockup Window -->
+          <div class="email-mockup">
+            <div class="email-mockup-top">
+              <div class="window-dots">
+                <span></span><span></span><span></span>
+              </div>
+              <div class="mockup-header-title">Mail Preview</div>
+            </div>
+
+            <div class="email-mockup-meta">
+              <div class="meta-row">
+                <span class="meta-label">From:</span>
+                <span class="meta-value" id="previewFromDisplay">National AI Summit Organizing Committee &lt;certificates@aisummit2026.org&gt;</span>
+              </div>
+              <div class="meta-row">
+                <span class="meta-label">To:</span>
+                <span class="meta-value" id="previewToDisplay">Aarav Sharma &lt;aarav.sharma@example.com&gt;</span>
+              </div>
+              <div class="meta-row">
+                <span class="meta-label">Subject:</span>
+                <span class="meta-value bold" id="previewSubjectDisplay">Your Official Certificate of Participation: National AI & Cloud Summit 2026 — Aarav Sharma</span>
+              </div>
+            </div>
+
+            <div class="email-mockup-body" id="previewBodyDisplay">
+              <!-- rendered live -->
+            </div>
+
+            <!-- Mock Attachment Card -->
+            <div class="email-attachment-box" id="previewAttachmentBox">
+              <div class="attachment-icon">📄</div>
+              <div class="attachment-info">
+                <span class="att-name" id="previewAttName">Certificate_Aarav_Sharma.png</span>
+                <span class="att-size">Verified High-Resolution Certificate &bull; 1.2 MB</span>
+              </div>
+              <span class="att-badge">Attached</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================= -->
+    <!-- STEP 5: GENERATE, PREVIEW & DISPATCH ENGINE -->
+    <!-- ============================================================= -->
+    <section class="step-panel" id="stepPanel-5">
+      <div class="panel-header">
+        <div>
+          <span class="step-pill">Step 5 of 5</span>
+          <h2 class="panel-title">Bulk Generation & Dispatch Center</h2>
+          <p class="panel-desc">Review your generated certificates, download individual copies or complete ZIP, and dispatch emails to eligible attendees.</p>
+        </div>
+        <div class="panel-header-actions">
+          <button class="btn btn-secondary" onclick="navigateToStep(4)">Back to Draft</button>
+        </div>
+      </div>
+
+      <div class="dispatch-layout">
+        <!-- Left: Certificate Inspection Carousel -->
+        <div class="dispatch-carousel-pane">
+          <div class="carousel-card">
+            <div class="carousel-card-header">
+              <h3 class="box-title">Certificate Inspection (<span id="carouselCurrentIndex">1</span> of <span id="carouselTotalCount">7</span>)</h3>
+              <div class="carousel-nav-btns">
+                <button class="btn btn-secondary btn-sm" id="btnPrevCert" onclick="stepCarousel(-1)">❮ Prev</button>
+                <button class="btn btn-secondary btn-sm" id="btnNextCert" onclick="stepCarousel(1)">Next ❯</button>
+              </div>
+            </div>
+
+            <!-- Preview Display Box -->
+            <div class="carousel-display" id="carouselDisplay">
+              <canvas id="dispatchPreviewCanvas" width="1200" height="850"></canvas>
+            </div>
+
+            <div class="carousel-footer-actions">
+              <div class="carousel-recipient-info">
+                <strong id="carouselRecipientName">Aarav Sharma</strong>
+                <span id="carouselRecipientMeta">Roll: 21CS101 &bull; aarav.sharma@example.com</span>
+              </div>
+              <div class="carousel-btns">
+                <button class="btn btn-secondary btn-sm" onclick="downloadCurrentCertificate()">
+                  <span class="icon">💾</span> Download This Certificate
+                </button>
+                <button class="btn btn-primary btn-sm" onclick="downloadAllCertificatesZip()">
+                  <span class="icon">📦</span> Download All as ZIP
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Dispatch Engine & Live Progress -->
+        <div class="dispatch-control-pane">
+          <!-- Real Email Dispatch Configuration -->
+          <div class="control-box">
+            <div class="box-header-row">
+              <h3 class="box-title">Email Dispatch Settings</h3>
+              <div class="tabs-mini">
+                <button type="button" class="tab-mini active" id="btnModeReal" onclick="setDispatchDeliveryMode('real')">⚡ Real SMTP Email</button>
+                <button type="button" class="tab-mini" id="btnModeSim" onclick="setDispatchDeliveryMode('simulated')">🧪 Simulation Mode</button>
+              </div>
+            </div>
+
+            <!-- SMTP Provider Selector -->
+            <div id="smtpConfigSection">
+              <label class="input-label">Choose Provider Preset</label>
+              <div class="provider-preset-pills">
+                <button type="button" class="provider-pill active" id="preset-gmail" onclick="selectProviderPreset('gmail')">Gmail (App Password)</button>
+                <button type="button" class="provider-pill" id="preset-outlook" onclick="selectProviderPreset('outlook')">Outlook / 365</button>
+                <button type="button" class="provider-pill" id="preset-custom" onclick="selectProviderPreset('custom')">Custom SMTP</button>
+              </div>
+
+              <div class="form-row mt-2">
+                <div class="form-col">
+                  <label for="smtpUserInput" class="input-label">Your Email Address (Sender)</label>
+                  <input type="email" id="smtpUserInput" class="form-input" placeholder="e.g. organizer@gmail.com">
+                </div>
+                <div class="form-col">
+                  <label for="smtpPassInput" class="input-label">App Password / Password</label>
+                  <input type="password" id="smtpPassInput" class="form-input" placeholder="16-character App Password">
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-col">
+                  <label for="smtpHostInput" class="input-label">SMTP Host</label>
+                  <input type="text" id="smtpHostInput" class="form-input" value="smtp.gmail.com">
+                </div>
+                <div class="form-col" style="max-width: 110px;">
+                  <label for="smtpPortInput" class="input-label">Port</label>
+                  <input type="number" id="smtpPortInput" class="form-input" value="587">
+                </div>
+              </div>
+
+              <!-- Gmail Helper Note -->
+              <div class="smtp-help-box" id="smtpHelpBox">
+                💡 <strong>Gmail Note:</strong> Use a 16-character <strong>Google App Password</strong> (from <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener" style="color: #a5b4fc; text-decoration: underline;">Google Account &gt; Security &gt; 2-Step &gt; App Passwords</a>), not your normal account password.
+              </div>
+
+              <div class="form-row mt-2">
+                <div class="form-col">
+                  <label class="checkbox-inline">
+                    <input type="checkbox" id="saveToEnvCheckbox" checked>
+                    <span>Save credentials securely to <code>.env</code> file</span>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Test Buttons Cluster -->
+              <div class="smtp-test-actions mt-2">
+                <button type="button" class="btn btn-secondary btn-sm" id="btnTestConn" onclick="testSmtpConnection()">
+                  <span class="icon">🔌</span> Test SMTP Login
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" id="btnSendSelfTest" onclick="sendSelfTestEmail()">
+                  <span class="icon">📨</span> Send Test Email to Myself
+                </button>
+              </div>
+            </div>
+
+            <!-- Trigger Button -->
+            <div class="mt-3">
+              <button class="btn btn-primary btn-lg w-100" id="btnStartDispatch" onclick="startCertificateDispatch()">
+                <span id="btnDispatchText">🚀 Dispatch All Real Emails Now</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Live Progress & Activity Stream -->
+          <div class="control-box">
+            <div class="box-header-row">
+              <h3 class="box-title">Live Dispatch Monitor</h3>
+              <span class="status-pill" id="dispatchStatusPill">Ready</span>
+            </div>
+
+            <!-- Progress Bar -->
+            <div class="progress-container">
+              <div class="progress-bar-track">
+                <div class="progress-bar-fill" id="dispatchProgressBar" style="width: 0%;"></div>
+              </div>
+              <div class="progress-metrics">
+                <span id="progressCountText">0 of 0 Sent</span>
+                <span id="progressPercentText">0%</span>
+              </div>
+            </div>
+
+            <!-- Summary KPI Strip -->
+            <div class="kpi-mini-grid mt-2">
+              <div class="kpi-mini-card">
+                <span class="kpi-mini-label">Total</span>
+                <span class="kpi-mini-val" id="dispTotal">0</span>
+              </div>
+              <div class="kpi-mini-card eligible">
+                <span class="kpi-mini-label">Successful</span>
+                <span class="kpi-mini-val" id="dispSuccess">0</span>
+              </div>
+              <div class="kpi-mini-card excluded">
+                <span class="kpi-mini-label">Failed</span>
+                <span class="kpi-mini-val" id="dispFailed">0</span>
+              </div>
+            </div>
+
+            <!-- Live Terminal Log -->
+            <div class="dispatch-log-window" id="dispatchLogWindow">
+              <div class="log-entry system">[SYSTEM] Dispatch engine initialized and awaiting trigger.</div>
+            </div>
+
+            <!-- Export Report Button -->
+            <div class="mt-2 text-right">
+              <button class="btn btn-secondary btn-sm" id="btnExportReport" onclick="exportDeliveryReportCSV()" disabled>
+                📄 Export Delivery Report (CSV)
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Notification Toast Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- Application Logic -->
+  <script src="app.js"></script>
+</body>
+</html>
