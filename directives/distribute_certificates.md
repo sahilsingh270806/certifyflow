@@ -4,7 +4,7 @@
 Automate the end-to-end process of generating personalized event participation/merit certificates and distributing them via email specifically to attendees who met attendance criteria.
 
 ## 2. Inputs & Prerequisites
-- **Certificate Template:** High-resolution image (PNG, JPG, SVG) or design link (Canva/design URL), with calibrated coordinates for candidate name, roll number, event title, date, and certificate ID.
+- **Certificate Template:** User-uploaded certificate background image (PNG, JPG, WebP, SVG) with calibrated visual coordinates for candidate name, roll number, event title, date, and certificate ID. Premade/canned templates removed in favor of dedicated user uploads.
 - **Attendance Spreadsheet:** Excel (`.xlsx`, `.xls`) or CSV containing:
   - `Name`: Full name of participant
   - `Roll No` / `ID`: Unique student/participant identifier
@@ -42,3 +42,4 @@ Automate the end-to-end process of generating personalized event participation/m
 
 ## 6. Self-Annealing Log
 - `2026-09-17`: Initial directive created for automated attendance-based certificate distribution web application and execution scripts.
+- `2026-09-17`: Simplified Step 2 template workflow — removed canned/premade certificate presets and Canva tabs. Shifted strictly to a dedicated user template image upload flow with dynamic canvas blueprint placeholder and upload status card.
